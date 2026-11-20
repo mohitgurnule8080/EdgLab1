@@ -1,0 +1,260 @@
+@import 'tailwindcss';
+
+@font-face {
+  font-family: 'Archivo';
+  font-style: normal;
+  font-display: swap;
+  font-weight: 100 900;
+  font-stretch: 62% 125%;
+  src: url('./assets/fonts/archivo-latin-wdth.woff2') format('woff2');
+}
+
+/*
+  EdgeLab tokens. Two desks share one set of roles:
+  night desk (default) has ink-blue surfaces; day desk (data-theme="light") has cool paper surfaces.
+  Brass is the one accent; teal / raspberry carry profit / loss and are validated for
+  colour-blind separation on each desk's panel colour.
+*/
+@theme {
+  --color-ink-950: #0c1220;
+  --color-ink-900: #121a2b;
+  --color-ink-850: #18223a;
+  --color-ink-800: #1e2a44;
+  --color-ink-700: #26324c;
+  --color-ink-600: #34425f;
+  --color-fg: #e7ebf3;
+  --color-fg-2: #a9b3c7;
+  --color-fg-3: #8592aa;
+  --color-brass: #e3a53c;
+  --color-brass-fg: #e3a53c;
+  --color-brass-ink: #1b1407;
+  --color-profit: #23aaa5;
+  --color-profit-fg: #5bd0c7;
+  --color-profit-ink: #04201f;
+  --color-loss: #cf4468;
+  --color-loss-strong: #c23b5f;
+  --color-loss-fg: #f08aa0;
+  --color-pending: #8da2fb;
+  --color-raised: #26324c;
+  --color-scrim: rgb(5 8 15 / 0.72);
+
+  --font-sans: 'Archivo', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+
+  --radius-ctl: 6px;
+  --radius-panel: 10px;
+}
+
+/* Values read by canvas charts, embedded widgets and inline SVG (always emitted). */
+:root {
+  /* Repeated from @theme so they exist even when no utility class uses them. */
+  --color-brass-fg: #e3a53c;
+  --color-pending: #8da2fb;
+  --color-raised: #26324c;
+  --color-scrim: rgb(5 8 15 / 0.72);
+
+  --field-bg: var(--color-ink-950);
+  --header-bg: rgb(12 18 32 / 0.94);
+  --raised-shadow: none;
+  --panel-shadow: none;
+  --toast-error: #2a1520;
+  --toast-success: #0f2426;
+
+  --chart-bg: #0c1220;
+  --chart-grid: rgba(38, 50, 76, 0.5);
+  --chart-cross: #5b6886;
+  --chart-label: #26324c;
+  --chart-border: #26324c;
+  --chart-text: #8592aa;
+  --chart-up: #23aaa5;
+  --chart-down: #cf4468;
+  --chart-exit: #a9b3c7;
+  --chart-pending: #8da2fb;
+  --chart-draft: #e3a53c;
+  /* Brass for lines and marks on the chart surface (darker on the day desk so it holds 3:1). */
+  --accent-line: #e3a53c;
+
+  /* Forex sessions: validated as a set (all pairs) on both desks. The overlap is a hatch of London and New York. */
+  --session-asia: #2563c9;
+  --session-london: #c98500;
+  --session-ny: #9085e9;
+  --session-rollover: var(--color-ink-700);
+}
+
+:root[data-theme='light'] {
+  color-scheme: light;
+  --color-ink-950: #eef1f6;
+  --color-ink-900: #ffffff;
+  --color-ink-850: #f3f5f9;
+  --color-ink-800: #e8ecf3;
+  --color-ink-700: #dbe1ea;
+  --color-ink-600: #c2cad7;
+  --color-fg: #111a2c;
+  --color-fg-2: #3d4960;
+  --color-fg-3: #5f6b82;
+  --color-brass-fg: #8a5a0a;
+  --color-profit: #20a39b;
+  --color-profit-fg: #08706b;
+  --color-loss: #c03a62;
+  --color-loss-strong: #b02f55;
+  --color-loss-fg: #b3264d;
+  --color-pending: #4f5fd6;
+  --color-raised: #ffffff;
+  --color-scrim: rgb(17 26 44 / 0.42);
+
+  --field-bg: #ffffff;
+  --header-bg: rgb(255 255 255 / 0.9);
+  --raised-shadow: 0 1px 2px rgb(17 26 44 / 0.16), 0 0 0 1px rgb(17 26 44 / 0.05);
+  --panel-shadow: 0 1px 2px rgb(17 26 44 / 0.05);
+  --toast-error: #fbe9ee;
+  --toast-success: #e3f4f2;
+
+  --chart-bg: #ffffff;
+  --chart-grid: rgba(17, 26, 44, 0.07);
+  --chart-cross: #8a95a8;
+  --chart-label: #3d4960;
+  --chart-border: #dbe1ea;
+  --chart-text: #5f6b82;
+  --chart-up: #20a39b;
+  --chart-down: #c03a62;
+  --chart-exit: #3d4960;
+  --chart-pending: #4f5fd6;
+  --chart-draft: #b7791f;
+  --accent-line: #b7791f;
+}
+
+@layer base {
+  html {
+    color-scheme: dark;
+    background: var(--color-ink-950);
+  }
+  body {
+    margin: 0;
+    font-family: var(--font-sans);
+    font-size: 14px;
+    line-height: 1.45;
+    color: var(--color-fg);
+    background: var(--color-ink-950);
+    -webkit-font-smoothing: antialiased;
+    font-feature-settings: 'tnum' 0;
+  }
+  :focus-visible {
+    outline: 2px solid var(--color-brass-fg);
+    outline-offset: 2px;
+  }
+  input,
+  select,
+  textarea,
+  button {
+    font: inherit;
+    color: inherit;
+  }
+  input[type='number']::-webkit-inner-spin-button {
+    opacity: 0.4;
+  }
+  ::selection {
+    background: color-mix(in oklab, var(--color-brass) 40%, transparent);
+  }
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+}
+
+@layer components {
+  /* Wide, heavy Archivo: used for the wordmark and page titles only. */
+  .type-display {
+    font-stretch: 118%;
+    font-weight: 800;
+    letter-spacing: -0.01em;
+  }
+  /* Semi-condensed with tabular figures: prices, P&L and every table. */
+  .type-data {
+    font-stretch: 92%;
+    font-variant-numeric: tabular-nums;
+  }
+  .field {
+    width: 100%;
+    background: var(--field-bg);
+    border: 1px solid var(--color-ink-600);
+    border-radius: var(--radius-ctl);
+    padding: 7px 10px;
+    min-height: 36px;
+    transition: border-color 120ms;
+  }
+  .field:hover {
+    border-color: var(--color-fg-3);
+  }
+  .field:focus {
+    outline: none;
+    border-color: var(--color-brass-fg);
+  }
+  .field::placeholder {
+    color: var(--color-fg-3);
+  }
+  select.field {
+    appearance: none;
+    padding-right: 28px;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%238592aa' stroke-width='1.5' fill='none'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 10px center;
+  }
+  .panel {
+    background: var(--color-ink-900);
+    border: 1px solid var(--color-ink-700);
+    border-radius: var(--radius-panel);
+    box-shadow: var(--panel-shadow);
+  }
+  .seg-on {
+    background: var(--color-raised);
+    color: var(--color-fg);
+    box-shadow: var(--raised-shadow);
+  }
+  .app-header {
+    background: var(--header-bg);
+  }
+  .toast-error {
+    background: var(--toast-error);
+  }
+  .toast-success {
+    background: var(--toast-success);
+  }
+  .table-data {
+    width: 100%;
+    border-collapse: collapse;
+    font-stretch: 92%;
+    font-variant-numeric: tabular-nums;
+  }
+  .table-data th {
+    text-align: left;
+    font-weight: 500;
+    color: var(--color-fg-3);
+    padding: 8px 10px;
+    border-bottom: 1px solid var(--color-ink-700);
+    white-space: nowrap;
+    position: sticky;
+    top: 0;
+    background: var(--color-ink-900);
+    z-index: 1;
+  }
+  .table-data td {
+    padding: 8px 10px;
+    border-bottom: 1px solid color-mix(in oklab, var(--color-ink-700) 60%, transparent);
+    white-space: nowrap;
+  }
+  .table-data tbody tr:hover td {
+    background: color-mix(in oklab, var(--color-ink-800) 70%, transparent);
+  }
+  .num,
+  .table-data th.num,
+  .table-data td.num {
+    text-align: right;
+  }
+  /* London and New York at once: a hatch of both session colours. */
+  .session-overlap {
+    background: repeating-linear-gradient(135deg, var(--session-london) 0 3px, var(--session-ny) 3px 6px);
+  }
+}
